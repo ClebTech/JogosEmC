@@ -1,8 +1,6 @@
 //Bibliotecas usadas para criação desse jogo
 #include <stdio.h>
 #include <stdlib.h>
-#include <locale.h>
-#include <time.h>
 #include <string.h>
 
 // Jogo da Velha (Jogador x Jogador) feito em C.
