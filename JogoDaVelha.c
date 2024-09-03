@@ -1,43 +1,72 @@
-//Bibliotecas usadas para criaÁ„o desse jogo
+//Bibliotecas usadas para cria√ß√£o desse jogo
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
 #include <time.h>
+#include <string.h>
 
+/* Jogo da Velha feito em C.
+ * Caso queira roda-lo no seu PC, recomendo que use 
+ * uma distro Linux baseada em Debian*/
+ 
+ 
+ void limpaTela(){
+	#ifdef _WIN32
+		system("cls");
+	#elif __unix__ || __linux__
+		system("clear");
+	#else
+		printf("ERRO AO LIMPAR A TELA! Sistema Operacional imcompativel!\n");
+	#endif
+	 
+}
+ 
 void letreiro(){
-    printf("==========================\n");
-    printf("=== JOGO DA VELHA EM C ===\n");
-    printf("==========================\n\n");
+	char *cor_vermelho = "\033[1;31m"; // Vermelho Escuro
+	char *cor_verde = "\033[1;92m"; // Verde Claro
+	char *reset = "\033[0m";        // Reset para cor padr√£o
+	
+    printf("%s==========================\n", cor_vermelho);
+    printf("=== %sJOGO DA VELHA EM C %s===\n", cor_verde, cor_vermelho);
+    printf("==========================\n\n%s", reset);
 
 }
 
-//Interface do jogo, onde os jogadores escolher„o quem comeÁar·
-int interface(){
-    system("cls");
-    letreiro();
-    printf("~ Escolha quem comeÁar·\n\n");
-    printf("1 - X\n");
-    printf("2 - O\n");
-    printf("3 - Tanto faz\n");
-    int opcao;
-    scanf("%d", &opcao);
-    
-    return opcao;
+//Interface do jogo, onde os jogadores escolher√£o quem come√ßa
+char interface(){
+	char opcao;
+	char *cor_azul = "\033[1;94m";  // Azul
+    char *cor_amarelo = "\033[1;93m"; // Amarelo
+    char *cor_verde = "\033[1;92m"; // Verde Claro
+	char *reset = "\033[0m";        // Reset para cor padr√£o
+	limpaTela();
+	letreiro();
+	printf("%s~ Escolha quem come√ßa.%s\n\n", cor_verde, reset);
+	printf("\t%sX%s\t", cor_amarelo, reset);
+	printf("%sO%s\n", cor_azul, reset);
+	scanf(" %c", &opcao);
+	
+	if(opcao == 'x'){
+		opcao = 'X';
+		return opcao;
+    }else if(opcao == 'o'){
+		opcao = 'O';
+		return opcao;
+	}else{
+		return '\0';
+	}
+	
 }
 
 //Jogo da velha
-void jogoDaVelha(int n, int sorteio){
+void jogoDaVelha(int n){
     int jogando = 1, posicaoEscolhida, tentativas=0;
     char simbolo, posicoes[10];
-
-//Caso os jogadores tenham escolhido a opÁ„o 3 na interface, ser· feito um sorteio para saber quem comeÁar· jogando
-    if(sorteio)
-        n = 1 + rand()%(10-1+1);
     
-    //Jogo comeÁou
-    system("cls");
+    //Jogo come√ßou
+    limpaTela();
     while(jogando){
-        //Isso aqui serve para ir alternando quem È o jogador da vez, exemplo: 1∫ X, depois O, depois X, depois O, depois X...
+        //Isso aqui serve para ir alternando quem √© o jogador da vez, exemplo: primeiro X, depois O, depois X, depois O, depois X...
         if(n % 2 == 1)
             simbolo = 'X';
 
@@ -46,7 +75,12 @@ void jogoDaVelha(int n, int sorteio){
         n++;
 
         //Lendo uma posicao e verificando se a posicao lida eh valida
-        system("cls");
+        limpaTela();
+        char *cor_azul = "\033[1;94m";  // Azul Claro
+        char *cor_amarelo = "\033[1;93m"; // Amarelo Claro
+        char *cor_verde = "\033[1;92m"; // Verde Claro
+        char *cor_vermelho = "\033[1;31m"; // Vermelho Escuro
+		char *reset = "\033[0m";        // Reset para cor padr√£o
         while(1){
 
             //Mostrando a matriz na tela
@@ -56,7 +90,12 @@ void jogoDaVelha(int n, int sorteio){
                 printf("       ");
                 for(int j=1; j<=3; j++){
                     if((posicoes[x] == 'X') || (posicoes[x] == 'O')){
-                        printf("[%c] ", posicoes[x]);
+						if(posicoes[x] == 'X'){
+							printf("[%s%c%s] ", cor_amarelo, posicoes[x], reset);
+						}
+						if(posicoes[x] == 'O'){
+							printf("[%s%c%s] ", cor_azul, posicoes[x], reset);
+						}
                     }else{
                         printf("[%d] ", x);
                     }
@@ -73,13 +112,15 @@ void jogoDaVelha(int n, int sorteio){
                 break;
             }
 
-            //Mostrando quem È o jogador da vez
-            printf("\n\n~ Jogador da vez: %c\n", simbolo);
-            printf("Escolha uma posicao: ");
+            //Mostrando quem √© o jogador da vez
+            if(simbolo == 'X')
+				printf("\n\n%s[%s%c%s] Escolha uma posicao. %s\n", cor_verde, cor_amarelo, simbolo, cor_verde, reset);
+			if(simbolo == 'O')
+				printf("\n\n%s[%s%c%s] Escolha uma posicao. %s\n", cor_verde, cor_azul, simbolo, cor_verde, reset);
             scanf("%d", &posicaoEscolhida);
             if((posicaoEscolhida > 9) || (posicaoEscolhida < 1) || (posicoes[posicaoEscolhida] == 'X' ) || (posicoes[posicaoEscolhida] == 'O')){
-                system("cls");
-                printf("ERRO! Escolha uma posiÁ„o v·lida.\n");
+                limpaTela();
+                printf("%sERRO! Escolha uma posi√ß√£o v√°lida.%s\n", cor_verde, reset);
             }else{
                 tentativas++;
                 posicoes[posicaoEscolhida] = simbolo;
@@ -87,7 +128,7 @@ void jogoDaVelha(int n, int sorteio){
             }
         }
         
-        //Verificando se h· algum ganhador, existem 8 maneiras de alguÈm ganhar (3 linhas + 3 colunhas + 2 diadonais)
+        //Verificando se h√° algum ganhador, existem 8 maneiras de algu√©m ganhar (3 linhas + 3 colunhas + 2 diadonais)
         if ((posicoes[1] == simbolo && posicoes[2] == simbolo && posicoes[3] == simbolo) ||
             (posicoes[4] == simbolo && posicoes[5] == simbolo && posicoes[6] == simbolo) ||
             (posicoes[7] == simbolo && posicoes[8] == simbolo && posicoes[9] == simbolo) ||
@@ -96,16 +137,21 @@ void jogoDaVelha(int n, int sorteio){
             (posicoes[3] == simbolo && posicoes[6] == simbolo && posicoes[9] == simbolo) ||
             (posicoes[1] == simbolo && posicoes[5] == simbolo && posicoes[9] == simbolo) ||
             (posicoes[3] == simbolo && posicoes[5] == simbolo && posicoes[7] == simbolo)){
-            system("cls");
+            limpaTela();
             jogando = 0;
-            //Mostrando a matriz do jogo da velha pela ˙ltima vez apÛs a vitÛria
+            //Mostrando a matriz do jogo da velha pela √∫ltima vez ap√≥s a vit√≥ria
             letreiro();
             int x=1;
             for(int i=1; i<=3; i++){
                 printf("       ");
                 for(int j=1; j<=3; j++){
                     if((posicoes[x] == 'X') || (posicoes[x] == 'O')){
-                        printf("[%c] ", posicoes[x]);
+						if(posicoes[x] == 'X'){
+							printf("[%s%c%s] ", cor_amarelo, posicoes[x], reset);
+						}
+						if(posicoes[x] == 'O'){
+							printf("[%s%c%s] ", cor_azul, posicoes[x], reset);
+						}
                     }else{
                         printf("[%d] ", x);
                     }
@@ -113,31 +159,35 @@ void jogoDaVelha(int n, int sorteio){
                 }
                 printf("\n");
             }
-            printf("\n\n~ Fim de Jogo");
-            printf("\n%c VENCEU!!!\n", simbolo);
+            printf("\n\n%s~ Fim de Jogo%s\n\n", cor_verde, reset);
+            printf("%s==========================", cor_vermelho);
+            if(simbolo == 'X')
+				printf("\n%s===    %sVENCEDOR: %s%c     %s===%s\n", cor_vermelho, cor_verde, cor_amarelo, simbolo, cor_vermelho, reset);
+			if(simbolo == 'O')
+				printf("\n%s===    %sVENCEDOR: %s%c     %s===%s\n", cor_vermelho, cor_verde, cor_azul, simbolo, cor_vermelho, reset);
+			printf("%s==========================\n%s", cor_vermelho, reset);
         }
     }
 }
 
-//CÛdigo main
+//fun√ß√£o main
 int main(){
-    //Colocando o idioma em portuguÍs para possibilitar a utilizaÁ„o de caracteres especiais
-    setlocale(LC_ALL,"Portuguese");
+    //Colocando o idioma em portugu√™s para possibilitar a utiliza√ß√£o de caracteres especiais
+    //setlocale(LC_ALL,"Portuguese");
     srand(time(NULL));
     
-    //Switch case para as opÁıes escolhidas na interface do jogo, 
+    //Switch case para as op√ß√µes escolhidas na interface do jogo, 
     switch(interface()){
-        case 1:
-            jogoDaVelha(1, 0);
+        case 'X':
+            jogoDaVelha(1);
             break;
-        case 2:
-            jogoDaVelha(2, 0);
+        case 'O':
+            jogoDaVelha(2);
             break;
-        case 3:
-            jogoDaVelha('\0', 1);
-            break;
+        default:
+			return 1;
     }
     return 0;
 }
 
-//Jogo criado por Clebson P. Santos, estudante de Sistemas de InformaÁ„o no IFNMG - Campus Janu·ria.
+//Jogo criado por Clebson P. Santos, estudante de Sistemas de Informa√ß√£o no IFNMG - Campus Janu√°ria.
