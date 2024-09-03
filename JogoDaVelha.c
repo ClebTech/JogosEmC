@@ -5,11 +5,9 @@
 #include <time.h>
 #include <string.h>
 
-/* Jogo da Velha feito em C.
- * Caso queira roda-lo no seu PC, recomendo que use 
- * uma distro Linux baseada em Debian*/
+// Jogo da Velha (Jogador x Jogador) feito em C.
  
- 
+ //Função de limpar a tela
  void limpaTela(){
 	#ifdef _WIN32
 		system("cls");
@@ -18,9 +16,9 @@
 	#else
 		printf("ERRO AO LIMPAR A TELA! Sistema Operacional imcompativel!\n");
 	#endif
-	 
 }
  
+//Função que mostra o letreiro do jogo
 void letreiro(){
 	char *cor_vermelho = "\033[1;31m"; // Vermelho Escuro
 	char *cor_verde = "\033[1;92m"; // Verde Claro
@@ -39,8 +37,10 @@ char interface(){
     char *cor_amarelo = "\033[1;93m"; // Amarelo
     char *cor_verde = "\033[1;92m"; // Verde Claro
 	char *reset = "\033[0m";        // Reset para cor padrão
+	
 	limpaTela();
 	letreiro();
+	
 	printf("%s~ Escolha quem começa.%s\n\n", cor_verde, reset);
 	printf("\t%sX%s\t", cor_amarelo, reset);
 	printf("%sO%s\n", cor_azul, reset);
@@ -60,8 +60,9 @@ char interface(){
 
 //Jogo da velha
 void jogoDaVelha(int n){
-    int jogando = 1, posicaoEscolhida, tentativas=0;
-    char simbolo, posicoes[10];
+    int jogando=1, posicaoEscolhida, tentativas=0;
+    char simbolo='\0';
+    char posicoes[10]={'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'};
     
     //Jogo começou
     limpaTela();
@@ -76,13 +77,14 @@ void jogoDaVelha(int n){
 
         //Lendo uma posicao e verificando se a posicao lida eh valida
         limpaTela();
+        
         char *cor_azul = "\033[1;94m";  // Azul Claro
         char *cor_amarelo = "\033[1;93m"; // Amarelo Claro
         char *cor_verde = "\033[1;92m"; // Verde Claro
         char *cor_vermelho = "\033[1;31m"; // Vermelho Escuro
 		char *reset = "\033[0m";        // Reset para cor padrão
+		
         while(1){
-
             //Mostrando a matriz na tela
             letreiro();
             int x=1;
@@ -106,8 +108,10 @@ void jogoDaVelha(int n){
 
             //Verificando se deu empate
             if(tentativas == 9){
-                printf("\n\n~ Fim de Jogo");
-                printf("\nDEU EMPATE!");
+				printf("\n\n%s~ Fim de Jogo%s\n\n", cor_verde, reset);
+				printf("%s==========================\n", cor_vermelho);
+				printf("===       %sEMPATE       %s===\n", cor_verde, cor_vermelho);
+				printf("==========================\n%s", reset);
                 jogando = 0;
                 break;
             }
@@ -117,7 +121,9 @@ void jogoDaVelha(int n){
 				printf("\n\n%s[%s%c%s] Escolha uma posicao. %s\n", cor_verde, cor_amarelo, simbolo, cor_verde, reset);
 			if(simbolo == 'O')
 				printf("\n\n%s[%s%c%s] Escolha uma posicao. %s\n", cor_verde, cor_azul, simbolo, cor_verde, reset);
+				
             scanf("%d", &posicaoEscolhida);
+            //Verificação para saber se o jogador informou uma posição válida!
             if((posicaoEscolhida > 9) || (posicaoEscolhida < 1) || (posicoes[posicaoEscolhida] == 'X' ) || (posicoes[posicaoEscolhida] == 'O')){
                 limpaTela();
                 printf("%sERRO! Escolha uma posição válida.%s\n", cor_verde, reset);
@@ -139,7 +145,8 @@ void jogoDaVelha(int n){
             (posicoes[3] == simbolo && posicoes[5] == simbolo && posicoes[7] == simbolo)){
             limpaTela();
             jogando = 0;
-            //Mostrando a matriz do jogo da velha pela última vez após a vitória
+            
+            //Mostrando a matriz do jogo da velha com os posições finais
             letreiro();
             int x=1;
             for(int i=1; i<=3; i++){
@@ -159,6 +166,8 @@ void jogoDaVelha(int n){
                 }
                 printf("\n");
             }
+            
+            //Mostrando quem foi o vencedor
             printf("\n\n%s~ Fim de Jogo%s\n\n", cor_verde, reset);
             printf("%s==========================", cor_vermelho);
             if(simbolo == 'X')
@@ -170,13 +179,9 @@ void jogoDaVelha(int n){
     }
 }
 
-//função main
+//Função main
 int main(){
-    //Colocando o idioma em português para possibilitar a utilização de caracteres especiais
-    //setlocale(LC_ALL,"Portuguese");
-    srand(time(NULL));
     
-    //Switch case para as opções escolhidas na interface do jogo, 
     switch(interface()){
         case 'X':
             jogoDaVelha(1);
